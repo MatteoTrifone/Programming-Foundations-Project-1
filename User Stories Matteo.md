@@ -51,12 +51,13 @@
 • A wrong user ID or password is rejected with a message, and the menu stays locked.
 • After login a worker sees only their own entries, and the manager functions are only available to a manager.
 
-##8. As a Worker, I want to enter start and end times manually so that I can record work that was not tracked live.
+##8. As a Worker, I want to see my rejected entries with the manager's reason so that I can correct them and submit them again.
 
 ## Acceptance criteria
-• The worker can enter the date, start time and end time.
-• The entered values are stored in the entry with the status PENDING.
-• Invalid values (wrong time format, end time before start time) are rejected and the worker is asked again.
+• The worker can show only their REJECTED entries.
+• Each rejected entry shows the reason the manager gave.
+• After the worker corrects the entry, its status goes back to PENDING.
+• The corrected entry appears again in the manager's list of pending entries.
 
 ##9. As a Worker, I want to remove an incorrect pending entry so that my timesheet remains accurate.
 
