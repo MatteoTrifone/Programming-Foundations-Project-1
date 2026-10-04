@@ -28,5 +28,3 @@ start_button = tkinter.Button(
 start_button.pack()
 
 app_window.mainloop()
-
-Test
