@@ -21,7 +21,6 @@
 • Only approved entries are counted.
 • The report is readable and consistently formatted.
 
->>>>>>> 114e762f78aba4200f8f1aa7e8f25727d9f1212b
 ##4.    As a Manager, I want my workers to have to take brakes according to swiss law.
 
 ## Acceptance criteria
