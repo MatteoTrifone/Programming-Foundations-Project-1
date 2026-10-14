@@ -1,0 +1,4 @@
+user_id,name,role,password
+anna,Anna Keller,WORKER,anna123
+ben,Ben Meier,WORKER,ben123
+carla,Carla Frei,MANAGER,carla123
