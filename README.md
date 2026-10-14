@@ -10,10 +10,23 @@ Programming Foundations (BIT), FHNW, autumn semester 2026 – Basel PT, Team B.
 |---|---|---|---|---|
 | Matteo Trifone | MatteoTrifone | Time recording | `timesheet.py` | US1, US5, US9 |
 | Robert Nemcsok | robertnemcsok | Worker overview | `overview.py` | US2, US4, US8 |
-| Leroy Omokhuale | *(GitHub user)* | Login and review | `review.py` | US7, US10, US11 |
+| Leroy Omokhuale | n9dept | Login and review | `review.py` | US7, US10, US11 |
 | Ahmed Holiel | ahmedholiel-rgb | Reports and absences | `reports.py` | US3, US6, US12 |
 
 Each student implements their three user stories in their own file. The shared files (`main.py`, `time_logic.py`, `storage.py`) hold the menu, the common calculations and the CSV access; see [Responsibilities](#responsibilities).
+
+## Revision after the review of 13 October
+
+| Feedback | Where it is answered |
+|---|---|
+| Console application only | `main.py` is a text menu; the tkinter window was removed. |
+| All documentation in one README, Markdown fixed | This file. `ideas.md` and `User Stories.md` were merged into it and deleted. |
+| One responsible student per story | [Team](#team), the story headings and [Responsibilities](#responsibilities). |
+| US4, US6, US12 were supporting functionality | Replaced: US4 filter the timesheet, US6 monthly overtime summary, US12 absences. Validation, saving and loading are shared work. |
+| Given-When-Then with invalid inputs, benefit of US7 | Every story in [User stories](#user-stories). |
+| Required hours, balance period, maximum hours, no duplicated warnings | [Working-time rules](#working-time-rules), calculated once in `time_logic.py`. |
+| Scope: simple rules, no Excel/PDF export | Excel and PDF export dropped, CSV only. The password login (US7) is kept deliberately small: a user file with a plain-text password, no password change, three attempts. |
+| Console interaction, input validation, file processing | [How the app meets the project requirements](#how-the-app-meets-the-project-requirements). |
 
 ## Problem statement
 

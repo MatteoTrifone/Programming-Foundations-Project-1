@@ -32,10 +32,10 @@ The dates in this table come from the semester programme and the project guideli
 
 Phillip reviewed the repo on 13 Oct and did not approve it yet. The README was rewritten on 14 Oct to answer his points (one README, console app, owners, three new stories, Given-When-Then, working-time rules, project requirements).
 
-- [ ] **Matteo**: read your three stories (US1, US5, US9) in the README and correct what you would build differently
-- [ ] **Robert**: read your three stories (US2, US4, US8) in the README and correct what you would build differently
-- [ ] **Leroy**: read your three stories (US7, US10, US11) in the README and correct what you would build differently
-- [ ] **Ahmed**: read your three stories (US3, US6, US12) in the README and correct what you would build differently
+- [x] **Matteo**: read your three stories (US1, US5, US9) in the README and correct what you would build differently
+- [x] **Robert**: read your three stories (US2, US4, US8) in the README and correct what you would build differently
+- [x] **Leroy**: read your three stories (US7, US10, US11) in the README and correct what you would build differently
+- [x] **Ahmed**: read your three stories (US3, US6, US12) in the README and correct what you would build differently
 - [ ] **Robert**: reply to Phillip with the repo link once everyone has checked their stories (target Fri 17 Oct)
 - [ ] **Team**: split every user story into tasks, each with an owner
 
