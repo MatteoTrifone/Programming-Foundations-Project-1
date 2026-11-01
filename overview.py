@@ -20,53 +20,75 @@ def ask_optional_date(prompt):
 
 
 def ask_status():
-    """Ask until the status filter is ALL, PENDING, APPROVED or REJECTED."""
+    """Ask until the status is ALL, PENDING, APPROVED or REJECTED."""
+    allowed = ["ALL", "PENDING", "APPROVED", "REJECTED"]
     while True:
         status = input("Status (ALL, PENDING, APPROVED, REJECTED): ").strip().upper()
-        if status == "ALL" or status in time_logic.STATUS_VALUES:
+        if status in allowed:
             return status
         print("unknown status, use ALL, PENDING, APPROVED or REJECTED")
 
 
 def filter_entries(entries, user_id, from_date, to_date, status):
-    """Return a new list with the user's entries that match all filters.
+    """Return a new list with only the entries that match all filters.
 
     from_date and to_date can be "" (no limit), status can be "ALL".
-    No input() and no print() in here, so it can be tested with assert.
     """
     found = []
     for entry in entries:
-        same_user = entry["user_id"] == user_id
-        after_from = from_date == "" or entry["date"] >= from_date
-        before_to = to_date == "" or entry["date"] <= to_date
-        same_status = status == "ALL" or entry["status"] == status
-        if same_user and after_from and before_to and same_status:
+        keep = True
+
+        # not my entry -> throw it out
+        if entry["user_id"] != user_id:
+            keep = False
+
+        # a from date was given and the entry is before it -> throw it out
+        if from_date != "" and entry["date"] < from_date:
+            keep = False
+
+        # a to date was given and the entry is after it -> throw it out
+        if to_date != "" and entry["date"] > to_date:
+            keep = False
+
+        # a status was chosen and the entry has another status -> throw it out
+        if status != "ALL" and entry["status"] != status:
+            keep = False
+
+        if keep == True:
             found.append(entry)
     return found
 
 
 def sort_by_date(entries):
     """Return a new list with the entries sorted by date (oldest first)."""
+    # 1. collect every date once
     dates = []
     for entry in entries:
         if entry["date"] not in dates:
             dates.append(entry["date"])
+
+    # 2. sort the dates (YYYY-MM-DD text sorts in the right order)
+    dates = sorted(dates)
+
+    # 3. go through the dates in order and pick the entries of each date
     sorted_entries = []
-    for day in sorted(dates):
+    for date in dates:
         for entry in entries:
-            if entry["date"] == day:
+            if entry["date"] == date:
                 sorted_entries.append(entry)
     return sorted_entries
 
 
 def print_entries(entries):
-    """Print one aligned row per entry: date, start, end, break, hours, status."""
-    print(f"{'Date':<12}{'Start':<7}{'End':<7}{'Break':>6}{'Hours':>8}  Status")
+    """Print one row per entry: date, start, end, break, hours, status."""
     for entry in entries:
+        date = entry["date"]
+        start = entry["start_time"]
+        end = entry["end_time"]
+        break_minutes = entry["break_minutes"]
         hours = float(entry["total_hours"])
-        line = f"{entry['date']:<12}{entry['start_time']:<7}{entry['end_time']:<7}"
-        line = line + f"{entry['break_minutes']:>6}{hours:>8.2f}  {entry['status']}"
-        print(line)
+        status = entry["status"]
+        print(f"{date}  {start}-{end}  break {break_minutes} min  {hours:.2f} h  {status}")
 
 
 def show_monthly_balance(entries, absences, current_user):
@@ -84,11 +106,16 @@ def filter_timesheet(entries, current_user):
         else:
             break
     status = ask_status()
-    found = filter_entries(entries, current_user["user_id"], from_date, to_date, status)
+
+    user_id = current_user["user_id"]
+    found = filter_entries(entries, user_id, from_date, to_date, status)
+
     if len(found) == 0:
         print("no entries found")
         return
-    print_entries(sort_by_date(found))
+
+    sorted_entries = sort_by_date(found)
+    print_entries(sorted_entries)
 
 
 def fix_rejected_entries(entries, current_user):
@@ -105,30 +132,33 @@ if __name__ == "__main__":
         {"user_id": "ben", "date": "2026-10-08", "status": "APPROVED"},
     ]
 
-    # README example: from 10-05 to 10-10 -> only Anna's entry of 10-08
+    # Test 1 - README example: from 10-05 to 10-10 -> only Anna's entry of 10-08
     found = filter_entries(test_entries, "anna", "2026-10-05", "2026-10-10", "ALL")
     assert len(found) == 1
     assert found[0]["date"] == "2026-10-08"
 
-    # Status filter: only Anna's approved entry, not Ben's
+    # Test 2 - status filter: only Anna's approved entry, not Ben's
     found = filter_entries(test_entries, "anna", "", "", "APPROVED")
     assert len(found) == 1
     assert found[0]["date"] == "2026-10-01"
 
-    # Boundary: from and to on the same day includes that day
+    # Test 3 - from and to on the same day: that day is included
     found = filter_entries(test_entries, "anna", "2026-10-08", "2026-10-08", "ALL")
     assert len(found) == 1
 
-    # No limits: all three of Anna's entries
-    assert len(filter_entries(test_entries, "anna", "", "", "ALL")) == 3
+    # Test 4 - no limits: all three of Anna's entries
+    found = filter_entries(test_entries, "anna", "", "", "ALL")
+    assert len(found) == 3
 
-    # Nothing found: empty list
-    assert filter_entries(test_entries, "anna", "2027-01-01", "", "ALL") == []
+    # Test 5 - nothing found: empty list
+    found = filter_entries(test_entries, "anna", "2027-01-01", "", "ALL")
+    assert found == []
 
-    # Sorting: oldest date first
-    ordered = sort_by_date(filter_entries(test_entries, "anna", "", "", "ALL"))
-    assert ordered[0]["date"] == "2026-10-01"
-    assert ordered[1]["date"] == "2026-10-08"
-    assert ordered[2]["date"] == "2026-10-15"
+    # Test 6 - sorting: oldest date first
+    found = filter_entries(test_entries, "anna", "", "", "ALL")
+    sorted_entries = sort_by_date(found)
+    assert sorted_entries[0]["date"] == "2026-10-01"
+    assert sorted_entries[1]["date"] == "2026-10-08"
+    assert sorted_entries[2]["date"] == "2026-10-15"
 
     print("all US4 checks passed")
