@@ -1,1 +1,5 @@
 entry_id,user_id,date,start_time,end_time,break_minutes,total_hours,comment,status,reason
+1,anna,2026-10-01,08:00,17:00,60,8.0,,APPROVED,
+2,anna,2026-10-08,08:00,16:30,30,8.0,,PENDING,
+3,anna,2026-10-15,09:00,17:00,15,7.75,,REJECTED,break too short
+4,ben,2026-10-08,07:00,15:00,30,7.5,,APPROVED,
