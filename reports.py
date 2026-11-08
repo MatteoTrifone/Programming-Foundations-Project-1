@@ -10,7 +10,27 @@ import time_logic
 
 def show_team_overview(entries, users):
     """US3 - approved hours per worker and team total for a month."""
-    print("US3 - Team overview: not implemented yet (Ahmed)")
+    month = input("Month (YYYY-MM): ")
+    if len(month) != 7 or month[4] != "-":
+        print("use YYYY-MM")
+        return
+
+    team_total = 0.0
+    for user in users:
+        if user["role"] != "WORKER":
+            continue
+        total = 0.0
+        for entry in entries:
+            if (entry["user_id"] == user["user_id"]
+                    and entry["status"] == "APPROVED"
+                    and entry["date"].startswith(month)):
+                total = total + float(entry["total_hours"])
+        print(f"{user['name']:<12} {total:>8.2f}")
+        team_total = team_total + total
+
+    print(f"{'Team total':<12} {team_total:>8.2f}")
+    if team_total == 0:
+        print("no approved hours in this month")
 
 
 def show_overtime_summary(entries, absences, users):
