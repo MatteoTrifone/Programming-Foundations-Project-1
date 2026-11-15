@@ -6,8 +6,6 @@ See README for the acceptance criteria and Given-When-Then examples.
 import time_logic
 
 
-
-
 def login(users):
 
     attempts = 0
@@ -30,37 +28,26 @@ def login(users):
 
 
 def show_pending_entries(entries):
-    # Wir sammeln die offenen Einträge separat, damit wir sie danach
-    # sortieren und nummerieren können, ohne die ursprüngliche Liste zu ändern.
+
     pending = []
 
     for entry in entries:
-        # Jeder Eintrag ist ein Dictionary. Deshalb lesen wir den Status
-        # über den Schlüssel "status" aus.
         if entry["status"] == "PENDING":
             pending.append(entry)
 
-    # Das Datumsformat YYYY-MM-DD lässt sich als Text chronologisch sortieren:
-    # zum Beispiel steht "2026-10-14" vor "2026-10-15".
     pending.sort(key=lambda entry: entry["date"])
 
-    # Wenn nichts offen ist, gibt es keine Tabelle anzuzeigen.
-    # return beendet die Funktion direkt nach dieser Meldung.
     if len(pending) == 0:
         print("nothing to review")
         return
 
-    # Diese Liste legt fest, welche Spalten die Tabelle haben soll.
     headers = [
         "no.", "worker", "date", "start",
         "end", "break", "hours", "comment"
     ]
 
-    # rows enthält die Werte, die später Zeile für Zeile gedruckt werden.
     rows = []
 
-    # enumerate nummeriert die gefilterten Einträge ab 1.
-    # So stimmen die Nummern mit der angezeigten Liste überein.
     for number, entry in enumerate(pending, start=1):
         row = [
             str(number),                   # Die Nummer wird als Text gespeichert.
@@ -74,38 +61,31 @@ def show_pending_entries(entries):
         ]
         rows.append(row)
 
-    # Wir starten mit der Länge jeder Überschrift als Spaltenbreite.
-    # Dadurch passt mindestens die Überschrift in ihre Spalte.
+    
     widths = []
 
-    for column_number in range(len(headers)):
-        widest = len(headers[column_number])
-
-        # Wir vergleichen die Überschrift mit allen Zellen dieser Spalte.
-        # Die breiteste davon bestimmt die nötige Spaltenbreite.
+    for column_numbers in range(len(headers)):
+        widest = len(headers[column_numbers])
+        
         for row in rows:
-            if len(row[column_number]) > widest:
-                widest = len(row[column_number])
-
+            if len(row[column_numbers]) > widest:
+                widest = len(row[column_numbers])
         widths.append(widest)
 
-    # ljust füllt jede Überschrift rechts mit Leerzeichen auf.
-    # Dadurch beginnen die Werte der nächsten Zeile an derselben Stelle.
-    header_line = "  ".join(
-        headers[i].ljust(widths[i])
-        for i in range(len(headers))
-    )
-    print(header_line)
+    for i in range(len(headers)):
+        if i == len(headers) - 1:
+            print(headers[i].ljust(widths[i]))
+        else:
+            print(headers[i].ljust(widths[i]), end=" | ")
 
-    # Dasselbe Ausrichten machen wir für jede Datenzeile.
-    # join verbindet die Zellen mit zwei Leerzeichen Abstand.
-    for row in rows:
-        row_line = "  ".join(
-            row[i].ljust(widths[i])
-            for i in range(len(row))
-        )
-        print(row_line)
+    print("-" * (sum(widths) + 3 * (len(headers) - 1)))
 
+    for row in rows: 
+        for i in range(len(row)):
+            if i == len(row) - 1:
+                print(row[i].ljust(widths[i]))
+            else:
+                print(row[i].ljust(widths[i]), end= " | ")
 
 
 def approve_or_reject(entries):
