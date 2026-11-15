@@ -22,9 +22,13 @@ STATUS_VALUES = ["PENDING", "APPROVED", "REJECTED"]
 ABSENCE_TYPES = ["VACATION", "SICK", "HOLIDAY"]
 ROLES = ["WORKER", "MANAGER"]
 
+#Formatting
+LINE_TIMELOGIC = "=" * 34
 
 def is_valid_date(text):
     """True if text has the form YYYY-MM-DD and is a real date."""
+    if len(text) != 10:
+        return False
     try:
         datetime.strptime(text, DATE_FORMAT)
         return True
@@ -34,11 +38,13 @@ def is_valid_date(text):
 
 def is_valid_time(text):
     """True if text has the form HH:MM."""
+    if len(text) != 5:
+        return False
     try:
         datetime.strptime(text, TIME_FORMAT)
         return True
     except ValueError:
-        return False
+        return False    
 
 
 def is_valid_month(text):
@@ -138,6 +144,28 @@ def format_hours(hours):
 def format_balance(balance):
     """-6.0 -> '-6.00 h', 3.5 -> '+3.50 h'"""
     return f"{balance:+.2f} h"
+
+def check_full_entry(date,start_time,end_time,break_length,entries,user_id,skip_entry_id): 
+    """Checks if the entry is valid and returns individual error message or empty text if nothing is wrong."""
+    if end_time <= start_time:
+        return(f"{LINE_TIMELOGIC}\n{"Start time must be before end time"}")
+               
+    worked_hours = calculate_total_hours(start_time,end_time,break_length)
+
+    if worked_hours <= 0:
+        return(f"{LINE_TIMELOGIC}\n{"Error. Worked hours can't be 0 or less than 0."}")
+    
+    if worked_hours > MAX_HOURS_PER_ENTRY:
+        return(f"{LINE_TIMELOGIC}\n{"Error. Worked hours can't be more than 10."}")
+
+    for entry in entries:
+        if user_id == entry["user_id"] and date == entry["date"] and str(skip_entry_id) != str(entry["entry_id"]):
+            return(f"{LINE_TIMELOGIC}\n{"Please input one entry per date."}")
+    
+    if required_break_minutes(worked_hours) > break_length:
+        return(f"{LINE_TIMELOGIC}\n{"Please input valid break length"}\n{"Break length too short."}")
+    
+    return ""
 
 
 if __name__ == "__main__":
