@@ -89,5 +89,23 @@ def show_pending_entries(entries):
 
 
 def approve_or_reject(entries):
-    """US11 - approve (a) or reject (r) with a reason; only pending entries."""
-    print("US11 - Approve or reject: not implemented yet (Leroy)")
+
+    pending = []
+
+    for entry in entries: 
+        if entry["status"] == "PENDING":
+            pending.append(entry)
+
+    if len(pending) == 0:
+        print("nothing to review")
+        return
+
+    pending.sort(key=lambda entry: entry["date"])
+
+    for number, entry in enumerate(pending, start=1):
+        print(number, entry["user_id"], entry["date"])
+
+    choice = int(input("Select entry number: "))
+    selected_entry = pending[choice - 1]
+
+    
